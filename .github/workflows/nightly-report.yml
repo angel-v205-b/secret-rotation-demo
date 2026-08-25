@@ -1,0 +1,23 @@
+name: nightly-report
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -v
+      - run: echo "posting nightly report with token ${DEPLOY_TOKEN:0:4}..."
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      - name: authenticate to deploy target
+        run: bash scripts/deploy_auth.sh
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          DEPLOY_TARGET: ${{ github.repository_owner }}/notify-relay-deploy-target
