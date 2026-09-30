@@ -13,9 +13,6 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - run: pytest -v
-      - run: echo "posting nightly report with token ${DEPLOY_TOKEN:0:4}..."
-        env:
-          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
       - name: authenticate to deploy target
         run: bash scripts/deploy_auth.sh
         env:
